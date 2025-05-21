@@ -20,8 +20,9 @@ setup(
         "googlemaps",
         "camel-ai[model_platforms]",
         "colorama",
-        "google-adk",
-        "litellm"
+        "google-adk==0.5.0",
+        "litellm",
+        "lbg"
     ],
     author="Lin Hang",
     author_email="linhang@dp.tech",
