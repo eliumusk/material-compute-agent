@@ -36,37 +36,6 @@
    - 能带结构分析
    - 自动报告生成
 
-## 安装方法
-
-1. 克隆项目并初始化子模块
-```bash
-git clone --recursive https://github.com/yourusername/bohr-science-agent-framework.git
-cd bohr-science-agent-framework
-```
-
-2. 创建并激活虚拟环境
-```bash
-conda create -n bohr-agent python=3.11
-conda activate bohr-agent
-```
-
-3. 安装依赖
-```bash
-pip install -e .
-```
-
-## 依赖说明
-
-- Python >= 3.11
-- pymatgen
-- openai
-- pandas >= 2.2.2
-- camel-ai
-- google-adk
-- litellm
-
-- 其他依赖见 setup.py
-
 ## 如何自定义Science任务
 
 1. 定义Tools
