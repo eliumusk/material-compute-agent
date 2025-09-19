@@ -3,159 +3,1959 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VASP Agent Demo</title>
+  <title>VASP Agent - 智能材料计算平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Markdown渲染库 -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.2/marked.min.js"></script>
   <style>
-    :root { --bg:#0b0f14; --panel:#121822; --muted:#8696b0; --text:#e8eef7; --accent:#3aa0ff; --line:#1e2633 }
-    * { box-sizing: border-box; }
-    body { margin:0; background:var(--bg); color:var(--text); font:14px/1.5 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial; }
-    header { padding:12px 16px; border-bottom:1px solid var(--line); background:var(--panel); display:flex; align-items:center; gap:12px }
-    header h1 { margin:0; font-size:16px }
-    main { display:flex; height:calc(100vh - 54px); }
-    .col { flex:1; display:flex; flex-direction:column; min-width:0 }
-    .left { border-right:1px solid var(--line) }
-    .section-title { color:var(--muted); padding:8px 12px; border-bottom:1px solid var(--line) }
-    .messages { flex:1; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:8px }
-    .msg { padding:10px 12px; border-radius:8px; max-width:80% }
-    .msg.user { background:#1a2433; margin-left:auto }
-    .msg.model { background:#101826; border:1px solid var(--line) }
-    .input-bar { display:flex; gap:8px; padding:12px; border-top:1px solid var(--line); background:var(--panel) }
-    .input-bar input { flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--line); background:#0e1520; color:var(--text) }
-    .input-bar button, .toolbar button { padding:8px 12px; border-radius:8px; border:1px solid var(--line); background:#0e1520; color:var(--text); cursor:pointer }
-    .input-bar button:hover, .toolbar button:hover { border-color:var(--accent) }
+    :root {
+      /* 重新定义的色彩系统 - 基于科学研究的专业感 */
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #111827;
+      --bg-tertiary: #1f2937;
+      --bg-elevated: #374151;
 
-    .toolbar { display:flex; align-items:center; gap:8px; padding:8px 12px; border-bottom:1px solid var(--line); background:var(--panel) }
-    .files { flex:1; overflow:auto; padding:8px }
-    .file-entry { padding:6px 8px; border-bottom:1px dashed var(--line); cursor:pointer }
-    .file-entry:hover { background:#0f1622 }
-    .preview { height:40%; border-top:1px solid var(--line); background:#0e1520 }
-    .preview pre { margin:0; padding:12px; overflow:auto; white-space:pre-wrap; word-break:break-word }
-    select { background:#0e1520; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:6px 8px }
-    small { color:var(--muted) }
+      --text-primary: #f9fafb;
+      --text-secondary: #d1d5db;
+      --text-muted: #9ca3af;
+      --text-accent: #60a5fa;
+
+      --border-subtle: #374151;
+      --border-default: #4b5563;
+      --border-strong: #6b7280;
+
+      --accent-primary: #3b82f6;
+      --accent-secondary: #1d4ed8;
+      --accent-success: #10b981;
+      --accent-warning: #f59e0b;
+      --accent-error: #ef4444;
+
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-2xl: 48px;
+
+      --font-size-xs: 12px;
+      --font-size-sm: 14px;
+      --font-size-base: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 20px;
+      --font-size-2xl: 24px;
+      --font-size-3xl: 30px;
+
+      --line-height-tight: 1.25;
+      --line-height-normal: 1.5;
+      --line-height-relaxed: 1.75;
+
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-normal);
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* 全局动画性能优化 */
+    * {
+      will-change: auto;
+    }
+
+    *:hover, *:focus, *:active {
+      will-change: transform, opacity, background-color, border-color, box-shadow;
+    }
+
+    /* ===== 导航栏样式 ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: var(--spacing-md) 0;
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .brand-title {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: var(--line-height-tight);
+    }
+
+    .brand-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+      line-height: var(--line-height-tight);
+    }
+
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    /* ===== 进度指示器 ===== */
+    .progress-container {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: var(--spacing-lg) 0;
+    }
+
+    .progress-steps {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .progress-steps::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 60px;
+      right: 60px;
+      height: 2px;
+      background: var(--border-subtle);
+      z-index: 1;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-sm);
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-indicator {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+      transition: all var(--transition-normal);
+    }
+
+    .step.active .step-indicator {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: white;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .step.completed .step-indicator {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+      color: white;
+    }
+
+    .step-label {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+      font-weight: 500;
+      text-align: center;
+      transition: color var(--transition-normal);
+    }
+
+    .step.active .step-label {
+      color: var(--text-primary);
+    }
+
+    /* ===== 主容器布局 ===== */
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: var(--spacing-lg);
+      min-height: calc(100vh - 200px);
+    }
+
+    /* ===== 对话区域 ===== */
+    .chat-section {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .chat-header {
+      padding: var(--spacing-lg);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-tertiary);
+    }
+
+    .chat-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .chat-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+      min-height: 400px;
+      max-height: 600px;
+    }
+
+    .chat-input-container {
+      padding: var(--spacing-lg);
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-tertiary);
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      gap: var(--spacing-sm);
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      transition: border-color var(--transition-normal);
+    }
+
+    .input-wrapper:focus-within {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-normal);
+      resize: none;
+      min-height: 24px;
+      max-height: 120px;
+      font-family: inherit;
+    }
+
+    .chat-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .input-actions {
+      display: flex;
+      gap: var(--spacing-xs);
+      align-items: center;
+    }
+
+    /* ===== 按钮系统 ===== */
+    .btn-primary, .btn-secondary, .btn-icon, .btn-sm {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-xs);
+      font-weight: 500;
+      font-size: var(--font-size-sm);
+      line-height: var(--line-height-tight);
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      text-decoration: none;
+      white-space: nowrap;
+      user-select: none;
+      outline: none;
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      color: white;
+      padding: var(--spacing-sm) var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-secondary);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border-color: var(--border-subtle);
+      padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-default);
+      color: var(--text-primary);
+    }
+
+    .btn-icon {
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      padding: var(--spacing-sm);
+      border-radius: var(--radius-md);
+    }
+
+    .btn-icon:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .btn-sm {
+      font-size: var(--font-size-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    /* ===== 消息样式 ===== */
+    .message {
+      display: flex;
+      gap: var(--spacing-md);
+      max-width: 85%;
+      animation: messageSlideIn var(--transition-normal) ease-out;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .message.user .message-avatar {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .message.model .message-avatar {
+      background: var(--bg-elevated);
+      color: var(--text-accent);
+    }
+
+    .message-content {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      color: var(--text-primary);
+      line-height: var(--line-height-relaxed);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .message.user .message-content {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: white;
+    }
+
+    /* 消息内加载状态 */
+    .message-loading {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .loading-dots {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .loading-spinner-small {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border-subtle);
+      border-top: 2px solid var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-message {
+      animation: messageSlideIn var(--transition-normal) ease-out;
+    }
+
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== 侧边栏 ===== */
+    .sidebar {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: var(--spacing-md);
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      position: relative;
+    }
+
+    .tab-btn.active {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-primary);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text-secondary);
+      background: var(--bg-elevated);
+    }
+
+    .tab-content {
+      flex: 1;
+      padding: var(--spacing-lg);
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* ===== 文件列表 ===== */
+    .files-header {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .files-toolbar {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+    }
+
+    .select-input {
+      flex: 1;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-sm) var(--spacing-md);
+      color: var(--text-primary);
+      font-size: var(--font-size-sm);
+      outline: none;
+      transition: border-color var(--transition-normal);
+    }
+
+    .select-input:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .files-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      border: 1px solid transparent;
+    }
+
+    .file-item:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-subtle);
+    }
+
+    .file-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--text-accent);
+      flex-shrink: 0;
+    }
+
+    .file-name {
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .file-size {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-2xl);
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-state svg {
+      margin-bottom: var(--spacing-md);
+      opacity: 0.5;
+    }
+
+    .empty-state p {
+      font-weight: 500;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .empty-state small {
+      font-size: var(--font-size-xs);
+    }
+
+    /* ===== 结果分组样式 ===== */
+    .result-group {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .result-group-title {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--text-primary);
+      padding: var(--spacing-sm) 0;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .results-header {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .results-toolbar {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+    }
+
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .result-subgroup {
+      margin-left: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .result-subgroup-title {
+      font-size: var(--font-size-xs);
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: var(--spacing-xs) 0;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    /* ===== PDF样式 ===== */
+    .pdfs-header {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .pdfs-toolbar {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+    }
+
+    .pdfs-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .pdf-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-tertiary);
+      transition: all var(--transition-normal);
+    }
+
+    .pdf-item:hover {
+      border-color: var(--border-default);
+      background: var(--bg-elevated);
+    }
+
+    .pdf-actions {
+      margin-left: auto;
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+
+    .pdf-actions button {
+      font-size: var(--font-size-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    /* ===== 模态框 ===== */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-lg);
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      animation: fadeIn var(--transition-normal) ease-out;
+    }
+
+    .modal-content {
+      position: relative;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-xl);
+      max-width: 800px;
+      max-height: 80vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      animation: modalSlideIn var(--transition-normal) ease-out;
+    }
+
+    .modal-header {
+      padding: var(--spacing-lg);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      flex: 1;
+      overflow: auto;
+      padding: var(--spacing-lg);
+    }
+
+    .modal-footer {
+      padding: var(--spacing-lg);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      gap: var(--spacing-sm);
+      justify-content: flex-end;
+    }
+
+    .code-preview {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+      font-size: var(--font-size-sm);
+      line-height: var(--line-height-relaxed);
+      color: var(--text-primary);
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    /* ===== 加载状态 ===== */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(10, 14, 26, 0.9);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-subtle);
+      border-top: 3px solid var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      color: var(--text-primary);
+      font-size: var(--font-size-base);
+      font-weight: 500;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ===== 工具类 ===== */
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    .text-primary {
+      color: var(--text-primary);
+    }
+
+    .text-accent {
+      color: var(--text-accent);
+    }
+
+    /* ===== 响应式设计 ===== */
+    @media (max-width: 1024px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+      }
+
+      .sidebar {
+        order: -1;
+        max-height: 300px;
+      }
+
+      .progress-steps {
+        padding: 0 var(--spacing-md);
+      }
+
+      .step-label {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-content {
+        padding: 0 var(--spacing-md);
+      }
+
+      .brand-subtitle {
+        display: none;
+      }
+
+      .main-container {
+        padding: var(--spacing-md);
+      }
+
+      .chat-messages {
+        max-height: 400px;
+      }
+
+      .modal-content {
+        margin: var(--spacing-md);
+        max-height: calc(100vh - 32px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .progress-steps::before {
+        left: 40px;
+        right: 40px;
+      }
+
+      .step-indicator {
+        width: 32px;
+        height: 32px;
+        font-size: var(--font-size-xs);
+      }
+
+      .chat-input-container {
+        padding: var(--spacing-md);
+      }
+
+      .input-wrapper {
+        padding: var(--spacing-sm);
+      }
+    }
+
+    /* ===== 滚动条样式 ===== */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-default);
+      border-radius: var(--radius-sm);
+      transition: background var(--transition-normal);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-strong);
+    }
+
+    /* Firefox 滚动条 */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-default) var(--bg-tertiary);
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>VASP Agent</h1>
-    <small>对话 + 文件预览（Demo）</small>
-  </header>
-  <main>
-    <section class="col left">
-      <div class="section-title">对话</div>
-      <div id="messages" class="messages"></div>
-      <div class="input-bar">
-        <input id="input" type="text" placeholder="输入消息，回车发送…" />
-        <button id="send">发送</button>
+  <!-- 顶部导航栏 -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="navbar-brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">VASP Agent</h1>
+          <p class="brand-subtitle">智能材料计算平台</p>
+        </div>
+      </div>
+
+      <div class="navbar-actions">
+        <button class="btn-icon" id="theme-toggle" title="切换主题">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="settings" title="设置">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 进度指示器 -->
+  <div class="progress-container">
+    <div class="progress-steps">
+      <div class="step active" data-step="1">
+        <div class="step-indicator">1</div>
+        <div class="step-label">任务信息</div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="step-indicator">2</div>
+        <div class="step-label">结构确认</div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="step-indicator">3</div>
+        <div class="step-label">配置检查</div>
+      </div>
+      <div class="step" data-step="4">
+        <div class="step-indicator">4</div>
+        <div class="step-label">任务提交</div>
+      </div>
+      <div class="step" data-step="5">
+        <div class="step-indicator">5</div>
+        <div class="step-label">结果分析</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主要内容区域 -->
+  <main class="main-container">
+    <!-- 对话区域 -->
+    <section class="chat-section">
+      <div class="chat-header">
+        <h2 class="chat-title">对话</h2>
+        <div class="chat-actions">
+          <button class="btn-secondary btn-sm" id="new-session">新会话</button>
+          <button class="btn-secondary btn-sm" id="retry">重试</button>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="messages">
+        <!-- 消息将在这里动态添加 -->
+      </div>
+
+      <div class="chat-input-container">
+        <div class="input-wrapper">
+          <textarea
+            id="input"
+            class="chat-input"
+            placeholder="描述你的材料计算需求，或上传PDF文献..."
+            rows="1"
+          ></textarea>
+          <div class="input-actions">
+            <button class="btn-icon" id="attach-file" title="上传文件">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.44 11.05L12.25 20.24A6 6 0 0 1 3.81 11.8L13 2.61A4 4 0 0 1 18.66 8.27L9.47 17.46A2 2 0 0 1 6.61 14.6L15.8 5.41" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="btn-primary" id="send">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
-    <section class="col right">
-      <div class="toolbar">
-        <button id="refresh">刷新目录</button>
-        <label>calcdir: </label>
-        <select id="calcdirs"></select>
+
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-tabs">
+        <button class="tab-btn active" data-tab="files">文件</button>
+        <button class="tab-btn" data-tab="results">结果</button>
+        <button class="tab-btn" data-tab="pdfs">文献</button>
+        <button class="tab-btn" data-tab="logs">日志</button>
       </div>
-      <div id="files" class="files"></div>
-      <div class="preview">
-        <div class="section-title">预览</div>
-        <pre id="preview"></pre>
+
+      <!-- 文件标签页 -->
+      <div class="tab-content active" id="files-tab">
+        <div class="files-header">
+          <div class="files-toolbar">
+            <button class="btn-secondary btn-sm" id="refresh">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              刷新
+            </button>
+            <select id="calcdirs" class="select-input">
+              <option value="">选择计算目录</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="files-list" id="files">
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p>暂无文件</p>
+            <small>选择计算目录查看文件</small>
+          </div>
+        </div>
       </div>
-    </section>
+
+      <!-- 结果标签页 -->
+      <div class="tab-content" id="results-tab">
+        <div class="results-header">
+          <div class="results-toolbar">
+            <button class="btn-secondary btn-sm" id="refresh-results">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              刷新
+            </button>
+            <select id="result-dirs" class="select-input">
+              <option value="">选择结果目录</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="results-list" id="results">
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 11H7l5-8 5 8h-2l-3 7-3-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p>暂无计算结果</p>
+            <small>提交VASP任务后结果将在这里显示</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- 文献标签页 -->
+      <div class="tab-content" id="pdfs-tab">
+        <div class="pdfs-header">
+          <div class="pdfs-toolbar">
+            <button class="btn-secondary btn-sm" id="refresh-pdfs">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              刷新
+            </button>
+          </div>
+        </div>
+
+        <div class="pdfs-list" id="pdfs">
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+              <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+              <line x1="16" y1="13" x2="8" y2="21" stroke="currentColor" stroke-width="2"/>
+              <line x1="8" y1="13" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <p>暂无PDF文献</p>
+            <small>将PDF文件放入项目目录中</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- 日志标签页 -->
+      <div class="tab-content" id="logs-tab">
+        <div class="logs-header">
+          <div class="logs-toolbar">
+            <button class="btn-secondary btn-sm" id="clear-logs">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="3,6 5,6 21,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              清空
+            </button>
+            <div class="log-status">
+              <span class="status-indicator" id="mcp-status"></span>
+              <span class="status-text">MCP连接状态</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="logs-content" id="logs-content">
+          <div class="log-entry">
+            <span class="log-time">[启动]</span>
+            <span class="log-message">等待MCP服务器连接...</span>
+          </div>
+        </div>
+      </div>
+    </aside>
   </main>
 
+  <!-- 文件预览模态框 -->
+  <div class="modal" id="file-preview-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="preview-title">文件预览</h3>
+        <button class="btn-icon" id="close-preview">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre id="preview" class="code-preview"></pre>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="download-file">下载文件</button>
+        <button class="btn-primary" id="close-preview-btn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 加载指示器 -->
+  <div class="loading-overlay" id="loading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p class="loading-text">正在处理您的请求...</p>
+    </div>
+  </div>
+
   <script>
-    let session = null;
+    // ===== 应用状态管理 =====
+    class VASPAgentApp {
+      constructor() {
+        this.session = null;
+        this.currentStep = 1;
+        this.isLoading = false;
+        this.currentTab = 'files';
+        this.currentPreviewPath = null;
 
-    const el = (sel) => document.querySelector(sel);
-    const messagesEl = el('#messages');
-    const inputEl = el('#input');
-    const sendBtn = el('#send');
-    const refreshBtn = el('#refresh');
-    const calcdirsEl = el('#calcdirs');
-    const filesEl = el('#files');
-    const previewEl = el('#preview');
+        this.initializeElements();
+        this.bindEvents();
+        this.initialize();
+      }
 
-    function addMsg(role, text) {
-      const node = document.createElement('div');
-      node.className = `msg ${role}`;
-      node.textContent = text;
-      messagesEl.appendChild(node);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
+      initializeElements() {
+        // 核心元素
+        this.messagesEl = document.getElementById('messages');
+        this.inputEl = document.getElementById('input');
+        this.sendBtn = document.getElementById('send');
+        this.loadingEl = document.getElementById('loading');
 
-    async function createSession() {
-      const res = await fetch('/api/session', { method: 'POST' });
-      if (!res.ok) throw new Error('创建会话失败');
-      session = await res.json();
-    }
+        // 导航和控制
+        this.newSessionBtn = document.getElementById('new-session');
+        this.retryBtn = document.getElementById('retry');
+        this.refreshBtn = document.getElementById('refresh');
 
-    async function sendMessage() {
-      const text = inputEl.value.trim();
-      if (!text || !session) return;
-      addMsg('user', text);
-      inputEl.value = '';
+        // 文件相关
+        this.calcdirsEl = document.getElementById('calcdirs');
+        this.filesEl = document.getElementById('files');
 
-      try {
-        const res = await fetch('/api/chat/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: session.session_id, text })
+        // 模态框
+        this.previewModal = document.getElementById('file-preview-modal');
+        this.previewTitle = document.getElementById('preview-title');
+        this.previewContent = document.getElementById('preview');
+        this.closePreviewBtn = document.getElementById('close-preview');
+        this.closePreviewBtn2 = document.getElementById('close-preview-btn');
+        this.downloadBtn = document.getElementById('download-file');
+
+        // 标签页
+        this.tabBtns = document.querySelectorAll('.tab-btn');
+        this.tabContents = document.querySelectorAll('.tab-content');
+
+        // 进度步骤
+        this.stepElements = document.querySelectorAll('.step');
+      }
+
+      bindEvents() {
+        // 消息发送
+        this.sendBtn.addEventListener('click', () => this.sendMessage());
+        this.inputEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            this.sendMessage();
+          }
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '发送失败');
-        (data.messages || []).forEach(m => addMsg(m.role === 'model' ? 'model' : 'user', m.text));
-      } catch (e) {
-        addMsg('model', `错误：${e.message}`);
+
+        // 输入框自动调整高度
+        this.inputEl.addEventListener('input', () => this.adjustTextareaHeight());
+
+        // 会话控制
+        this.newSessionBtn.addEventListener('click', () => this.createNewSession());
+        this.retryBtn.addEventListener('click', () => this.retryLastMessage());
+
+        // 文件操作
+        this.refreshBtn.addEventListener('click', () => this.loadCalcdirs());
+        this.calcdirsEl.addEventListener('change', () => this.loadFileList());
+
+        // 结果操作
+        this.refreshResultsBtn = document.getElementById('refresh-results');
+        this.resultDirsEl = document.getElementById('result-dirs');
+        this.resultsEl = document.getElementById('results');
+
+        this.refreshResultsBtn.addEventListener('click', () => this.loadResultDirs());
+        this.resultDirsEl.addEventListener('change', () => this.loadResultList());
+
+        // PDF操作
+        this.refreshPdfsBtn = document.getElementById('refresh-pdfs');
+        this.pdfsEl = document.getElementById('pdfs');
+
+        this.refreshPdfsBtn.addEventListener('click', () => this.loadPdfs());
+
+        // 模态框控制
+        this.closePreviewBtn.addEventListener('click', () => this.closePreview());
+        this.closePreviewBtn2.addEventListener('click', () => this.closePreview());
+        this.downloadBtn.addEventListener('click', () => this.downloadCurrentFile());
+        this.previewModal.querySelector('.modal-backdrop').addEventListener('click', () => this.closePreview());
+
+        // 标签页切换
+        this.tabBtns.forEach(btn => {
+          btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
+        });
+
+        // ESC 键关闭模态框
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.previewModal.classList.contains('active')) {
+            this.closePreview();
+          }
+        });
+      }
+
+      async initialize() {
+        try {
+          this.showLoading('正在初始化...');
+          await this.createSession();
+          await this.loadCalcdirs();
+          this.addMessage('model', '你好，我是 VASP Agent 智能材料计算助手。\n\n我可以帮助您：\n• 分析PDF文献中的材料信息\n• 生成和优化POSCAR结构文件\n• 配置VASP计算参数\n• 提交和监控计算任务\n• 分析计算结果并生成报告\n\n请告诉我您的材料体系或上传相关文献开始计算流程。');
+          this.hideLoading();
+        } catch (error) {
+          this.hideLoading();
+          this.addMessage('model', `初始化失败：${error.message}`);
+        }
+      }
+
+      // ===== 会话管理 =====
+      async createSession() {
+        const response = await fetch('/api/session', { method: 'POST' });
+        if (!response.ok) throw new Error('创建会话失败');
+        this.session = await response.json();
+      }
+
+      async createNewSession() {
+        try {
+          this.showLoading('正在创建新会话...');
+          await this.createSession();
+          this.messagesEl.innerHTML = '';
+          this.currentStep = 1;
+          this.updateProgressSteps();
+          this.addMessage('model', '新会话已创建。请告诉我您的材料计算需求。');
+          this.hideLoading();
+        } catch (error) {
+          this.hideLoading();
+          this.addMessage('model', `创建新会话失败：${error.message}`);
+        }
+      }
+
+      // ===== 消息处理 =====
+      async sendMessage() {
+        const text = this.inputEl.value.trim();
+        if (!text || !this.session || this.isLoading) return;
+
+        this.addMessage('user', text);
+        this.inputEl.value = '';
+        this.adjustTextareaHeight();
+        this.lastUserMessage = text;
+
+        try {
+          // 使用消息内加载指示器替代全屏遮罩
+          this.addLoadingMessage();
+          this.isLoading = true;
+          this.sendBtn.disabled = true;
+
+          const response = await fetch('/api/chat/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              session_id: this.session.session_id,
+              text: text
+            })
+          });
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || '发送失败');
+
+          // 移除加载消息
+          this.removeLoadingMessage();
+
+          // 添加返回的消息
+          (data.messages || []).forEach(msg => {
+            if (msg.role === 'model') {
+              this.addMessage('model', msg.text);
+              this.detectStepFromMessage(msg.text);
+            }
+          });
+
+          this.isLoading = false;
+          this.sendBtn.disabled = false;
+        } catch (error) {
+          this.removeLoadingMessage();
+          this.isLoading = false;
+          this.sendBtn.disabled = false;
+          this.addMessage('model', `错误：${error.message}\n\n您可以点击"重试"按钮重新发送消息。`);
+        }
+      }
+
+      async retryLastMessage() {
+        if (!this.lastUserMessage) return;
+        this.inputEl.value = this.lastUserMessage;
+        await this.sendMessage();
+      }
+
+      addMessage(role, text) {
+        const messageEl = document.createElement('div');
+        messageEl.className = `message ${role}`;
+
+        const avatarEl = document.createElement('div');
+        avatarEl.className = 'message-avatar';
+        avatarEl.textContent = role === 'user' ? 'U' : 'AI';
+
+        const contentEl = document.createElement('div');
+        contentEl.className = 'message-content';
+
+        // AI消息使用Markdown渲染，用户消息保持纯文本
+        if (role === 'model' && typeof marked !== 'undefined') {
+          contentEl.innerHTML = marked.parse(text);
+        } else {
+          contentEl.textContent = text;
+        }
+
+        // 移除时间戳显示
+        messageEl.appendChild(avatarEl);
+        messageEl.appendChild(contentEl);
+
+        this.messagesEl.appendChild(messageEl);
+        this.messagesEl.scrollTop = this.messagesEl.scrollHeight;
+      }
+
+      addLoadingMessage() {
+        const messageEl = document.createElement('div');
+        messageEl.className = 'message model loading-message';
+        messageEl.id = 'loading-message';
+
+        const avatarEl = document.createElement('div');
+        avatarEl.className = 'message-avatar';
+        avatarEl.textContent = 'AI';
+
+        const contentEl = document.createElement('div');
+        contentEl.className = 'message-content';
+
+        const loadingEl = document.createElement('div');
+        loadingEl.className = 'message-loading';
+        loadingEl.innerHTML = `
+          <div class="loading-dots">
+            <div class="loading-spinner-small"></div>
+            <span>正在处理您的请求...</span>
+          </div>
+        `;
+
+        contentEl.appendChild(loadingEl);
+        messageEl.appendChild(avatarEl);
+        messageEl.appendChild(contentEl);
+
+        this.messagesEl.appendChild(messageEl);
+        this.messagesEl.scrollTop = this.messagesEl.scrollHeight;
+      }
+
+      removeLoadingMessage() {
+        const loadingMsg = document.getElementById('loading-message');
+        if (loadingMsg) {
+          loadingMsg.remove();
+        }
+      }
+
+      // ===== 进度管理 =====
+      detectStepFromMessage(text) {
+        const lowerText = text.toLowerCase();
+
+        // 更精确的步骤检测逻辑
+        if (lowerText.includes('poscar') || lowerText.includes('结构文件') || lowerText.includes('晶体结构')) {
+          this.updateStep(2);
+        } else if (lowerText.includes('incar') || lowerText.includes('kpoints') || lowerText.includes('potcar') || lowerText.includes('配置文件') || lowerText.includes('参数设置')) {
+          this.updateStep(3);
+        } else if (lowerText.includes('任务已成功提交') || lowerText.includes('job submitted') || lowerText.includes('提交成功')) {
+          this.updateStep(4);
+          // 任务提交后，刷新结果标签页
+          this.loadResultsTab();
+        } else if (lowerText.includes('计算完成') || lowerText.includes('结果分析') || lowerText.includes('vasprun.xml')) {
+          this.updateStep(5);
+        }
+      }
+
+      updateStep(step) {
+        if (step > this.currentStep) {
+          this.currentStep = step;
+          this.updateProgressSteps();
+        }
+      }
+
+      updateProgressSteps() {
+        this.stepElements.forEach((el, index) => {
+          const stepNum = index + 1;
+          el.classList.remove('active', 'completed');
+
+          if (stepNum < this.currentStep) {
+            el.classList.add('completed');
+          } else if (stepNum === this.currentStep) {
+            el.classList.add('active');
+          }
+        });
+      }
+
+      // ===== 工具函数 =====
+      adjustTextareaHeight() {
+        this.inputEl.style.height = 'auto';
+        this.inputEl.style.height = Math.min(this.inputEl.scrollHeight, 120) + 'px';
+      }
+
+      showLoading(text = '正在处理...') {
+        this.isLoading = true;
+        this.loadingEl.querySelector('.loading-text').textContent = text;
+        this.loadingEl.classList.add('active');
+        this.sendBtn.disabled = true;
+      }
+
+      hideLoading() {
+        this.isLoading = false;
+        this.loadingEl.classList.remove('active');
+        this.sendBtn.disabled = false;
       }
     }
 
-    async function loadCalcdirs() {
-      const res = await fetch('/api/files/calcdirs');
-      const data = await res.json();
-      calcdirsEl.innerHTML = '';
-      (data.calcdirs || []).forEach(name => {
-        const opt = document.createElement('option');
-        opt.value = name; opt.textContent = name; calcdirsEl.appendChild(opt);
-      });
-      if (calcdirsEl.value) loadFileList(); else filesEl.innerHTML = '<small>暂无目录</small>';
-    }
-
-    async function loadFileList() {
-      const dir = calcdirsEl.value;
-      if (!dir) return;
-      const res = await fetch(`/api/files/list?path=${encodeURIComponent('tmp/' + dir)}`);
-      const data = await res.json();
-      filesEl.innerHTML = '';
-      (data.entries || []).filter(e => e.type === 'file').forEach(e => {
-        const div = document.createElement('div');
-        div.className = 'file-entry';
-        div.textContent = e.path;
-        div.onclick = () => loadFileContent(e.path);
-        filesEl.appendChild(div);
-      });
-      if (!filesEl.children.length) filesEl.innerHTML = '<small>该目录下没有文件</small>';
-    }
-
-    async function loadFileContent(path) {
-      const res = await fetch(`/api/files/read?path=${encodeURIComponent(path)}`);
-      const data = await res.json();
-      previewEl.textContent = data.content || data.error || '无内容';
-    }
-
-    // Events
-    sendBtn.onclick = sendMessage;
-    inputEl.onkeydown = (e) => { if (e.key === 'Enter') sendMessage(); };
-    refreshBtn.onclick = loadCalcdirs;
-    calcdirsEl.onchange = loadFileList;
-
-    // Init
-    (async function init() {
+    // ===== 文件管理扩展 =====
+    VASPAgentApp.prototype.loadCalcdirs = async function() {
       try {
-        await createSession();
-        await loadCalcdirs();
-        addMsg('model', '你好，我是 VASP Agent。可以开始你的计算流程，比如发送 PDF 路径或化学式。');
-      } catch (e) {
-        addMsg('model', `初始化失败：${e.message}`);
+        const response = await fetch('/api/files/calcdirs');
+        const data = await response.json();
+
+        this.calcdirsEl.innerHTML = '<option value="">选择计算目录</option>';
+        (data.calcdirs || []).forEach(name => {
+          const option = document.createElement('option');
+          option.value = name;
+          option.textContent = name;
+          this.calcdirsEl.appendChild(option);
+        });
+
+        if (data.calcdirs && data.calcdirs.length > 0) {
+          this.loadFileList();
+        } else {
+          this.showEmptyFileState();
+        }
+      } catch (error) {
+        console.error('加载目录失败:', error);
+        this.showEmptyFileState('加载目录失败');
       }
-    })();
+    };
+
+    VASPAgentApp.prototype.loadFileList = async function() {
+      const dir = this.calcdirsEl.value;
+      if (!dir) {
+        this.showEmptyFileState();
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/files/list?path=${encodeURIComponent('tmp/' + dir)}`);
+        const data = await response.json();
+
+        this.filesEl.innerHTML = '';
+        const files = (data.entries || []).filter(e => e.type === 'file');
+
+        if (files.length === 0) {
+          this.showEmptyFileState('该目录下没有文件');
+          return;
+        }
+
+        files.forEach(file => {
+          const fileEl = this.createFileElement(file);
+          this.filesEl.appendChild(fileEl);
+        });
+      } catch (error) {
+        console.error('加载文件列表失败:', error);
+        this.showEmptyFileState('加载文件失败');
+      }
+    };
+
+    VASPAgentApp.prototype.createFileElement = function(file) {
+      const fileEl = document.createElement('div');
+      fileEl.className = 'file-item';
+      fileEl.onclick = () => this.previewFile(file.path);
+
+      const iconEl = document.createElement('div');
+      iconEl.className = 'file-icon';
+      iconEl.innerHTML = this.getFileIcon(file.path);
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'file-name';
+      nameEl.textContent = file.path.split('/').pop();
+
+      fileEl.appendChild(iconEl);
+      fileEl.appendChild(nameEl);
+
+      return fileEl;
+    };
+
+    VASPAgentApp.prototype.getFileIcon = function(path) {
+      const ext = path.split('.').pop().toLowerCase();
+      const icons = {
+        'xml': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/><line x1="16" y1="13" x2="8" y2="21" stroke="currentColor" stroke-width="2"/><line x1="8" y1="13" x2="16" y2="21" stroke="currentColor" stroke-width="2"/></svg>',
+        'txt': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/><line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/><line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/><polyline points="10,9 9,9 8,9" stroke="currentColor" stroke-width="2"/></svg>',
+        'default': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/></svg>'
+      };
+      return icons[ext] || icons.default;
+    };
+
+    VASPAgentApp.prototype.showEmptyFileState = function(message = '暂无文件') {
+      this.filesEl.innerHTML = `
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+            <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <p>${message}</p>
+          <small>选择计算目录查看文件</small>
+        </div>
+      `;
+    };
+
+    VASPAgentApp.prototype.previewFile = async function(path) {
+      try {
+        this.showLoading('正在加载文件...');
+        const response = await fetch(`/api/files/read?path=${encodeURIComponent(path)}`);
+        const data = await response.json();
+
+        this.currentPreviewPath = path;
+        this.previewTitle.textContent = path.split('/').pop();
+        this.previewContent.textContent = data.content || data.error || '无内容';
+        this.previewModal.classList.add('active');
+
+        this.hideLoading();
+      } catch (error) {
+        this.hideLoading();
+        console.error('预览文件失败:', error);
+      }
+    };
+
+    VASPAgentApp.prototype.closePreview = function() {
+      this.previewModal.classList.remove('active');
+      this.currentPreviewPath = null;
+    };
+
+    VASPAgentApp.prototype.downloadCurrentFile = function() {
+      if (!this.currentPreviewPath) return;
+      const url = `/api/files/download?path=${encodeURIComponent(this.currentPreviewPath)}`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = this.currentPreviewPath.split('/').pop();
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+
+    VASPAgentApp.prototype.switchTab = function(tabName) {
+      if (this.currentTab === tabName) return;
+
+      this.currentTab = tabName;
+
+      // 更新标签按钮状态
+      this.tabBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+      });
+
+      // 更新标签内容显示
+      this.tabContents.forEach(content => {
+        content.classList.toggle('active', content.id === `${tabName}-tab`);
+      });
+
+      // 切换到不同标签页时自动加载
+      if (tabName === 'results') {
+        this.loadResultDirs();
+      } else if (tabName === 'pdfs') {
+        this.loadPdfs();
+      }
+    };
+
+    // ===== 结果管理功能 =====
+    VASPAgentApp.prototype.loadResultDirs = async function() {
+      try {
+        const response = await fetch('/api/files/list?path=server');
+        const data = await response.json();
+
+        this.resultDirsEl.innerHTML = '<option value="">选择结果目录</option>';
+
+        // 获取server目录下的所有时间戳目录，按时间倒序排列
+        const dirs = (data.entries || [])
+          .filter(e => e.type === 'directory' && e.path.match(/server\/\d{4}-\d{2}-\d{2}-\d{2}:\d{2}:\d{2}\.\d+/))
+          .sort((a, b) => b.path.localeCompare(a.path)); // 按名称倒序，时间戳目录会正确排序
+
+        dirs.forEach(dir => {
+          const option = document.createElement('option');
+          const dirName = dir.path.replace('server/', '');
+          option.value = dirName;
+          option.textContent = `${dirName} (${this.formatTimestamp(dirName)})`;
+          this.resultDirsEl.appendChild(option);
+        });
+
+        // 自动选择最新的目录
+        if (dirs.length > 0) {
+          const latestDir = dirs[0].path.replace('server/', '');
+          this.resultDirsEl.value = latestDir;
+          this.loadResultList();
+        } else {
+          this.showEmptyResultState();
+        }
+      } catch (error) {
+        console.error('加载结果目录失败:', error);
+        this.showEmptyResultState('加载结果目录失败');
+      }
+    };
+
+    VASPAgentApp.prototype.formatTimestamp = function(timestamp) {
+      // 将时间戳格式化为更友好的显示
+      const parts = timestamp.split('-');
+      if (parts.length >= 4) {
+        const date = parts.slice(0, 3).join('-');
+        const time = parts[3].split('.')[0];
+        return `${date} ${time}`;
+      }
+      return timestamp;
+    };
+
+    VASPAgentApp.prototype.loadResultList = async function() {
+      const dir = this.resultDirsEl.value;
+      if (!dir) {
+        this.showEmptyResultState();
+        return;
+      }
+
+      try {
+        // 首先获取时间戳目录下的tmp子目录
+        const tmpResponse = await fetch(`/api/files/list?path=${encodeURIComponent('server/' + dir + '/tmp')}`);
+        const tmpData = await tmpResponse.json();
+
+        this.resultsEl.innerHTML = '';
+
+        // 获取tmp目录下的所有计算目录
+        const calcDirs = (tmpData.entries || []).filter(e => e.type === 'directory');
+
+        if (calcDirs.length === 0) {
+          this.showEmptyResultState('该时间戳目录下没有计算结果');
+          return;
+        }
+
+        // 为每个计算目录创建一个分组
+        for (const calcDir of calcDirs) {
+          const calcDirName = calcDir.path.split('/').pop();
+          const calcResponse = await fetch(`/api/files/list?path=${encodeURIComponent(calcDir.path)}`);
+          const calcData = await calcResponse.json();
+
+          const files = (calcData.entries || []).filter(e => e.type === 'file');
+
+          if (files.length > 0) {
+            // 创建计算目录分组
+            const groupEl = document.createElement('div');
+            groupEl.className = 'result-group';
+
+            const groupTitleEl = document.createElement('div');
+            groupTitleEl.className = 'result-group-title';
+            groupTitleEl.textContent = `📁 ${calcDirName}`;
+
+            groupEl.appendChild(groupTitleEl);
+
+            // 按文件类型分类
+            const fileGroups = {
+              'input': files.filter(f => ['INCAR', 'POSCAR', 'KPOINTS', 'POTCAR'].includes(f.path.split('/').pop())),
+              'output': files.filter(f => ['OUTCAR', 'vasprun.xml', 'OSZICAR', 'CONTCAR', 'DOSCAR', 'EIGENVAL'].includes(f.path.split('/').pop())),
+              'other': files.filter(f => !['INCAR', 'POSCAR', 'KPOINTS', 'POTCAR', 'OUTCAR', 'vasprun.xml', 'OSZICAR', 'CONTCAR', 'DOSCAR', 'EIGENVAL'].includes(f.path.split('/').pop()))
+            };
+
+            // 创建子分组
+            Object.entries(fileGroups).forEach(([groupName, groupFiles]) => {
+              if (groupFiles.length > 0) {
+                const subGroupEl = document.createElement('div');
+                subGroupEl.className = 'result-subgroup';
+
+                const subGroupTitleEl = document.createElement('div');
+                subGroupTitleEl.className = 'result-subgroup-title';
+                subGroupTitleEl.textContent = {
+                  'input': '📝 输入文件',
+                  'output': '📊 输出文件',
+                  'other': '📄 其他文件'
+                }[groupName];
+
+                subGroupEl.appendChild(subGroupTitleEl);
+
+                groupFiles.forEach(file => {
+                  const fileEl = this.createFileElement(file);
+                  subGroupEl.appendChild(fileEl);
+                });
+
+                groupEl.appendChild(subGroupEl);
+              }
+            });
+
+            this.resultsEl.appendChild(groupEl);
+          }
+        }
+      } catch (error) {
+        console.error('加载结果文件失败:', error);
+        this.showEmptyResultState('加载结果文件失败');
+      }
+    };
+
+    VASPAgentApp.prototype.showEmptyResultState = function(message = '暂无计算结果') {
+      this.resultsEl.innerHTML = `
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 11H7l5-8 5 8h-2l-3 7-3-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p>${message}</p>
+          <small>提交VASP任务后结果将在这里显示</small>
+        </div>
+      `;
+    };
+
+    VASPAgentApp.prototype.loadResultsTab = function() {
+      // 当检测到任务提交成功时调用
+      if (this.currentTab === 'results') {
+        // 如果当前就在结果标签页，直接刷新
+        this.loadResultDirs();
+      } else {
+        // 否则切换到结果标签页
+        this.switchTab('results');
+      }
+    };
+
+    // ===== PDF管理功能 =====
+    VASPAgentApp.prototype.loadPdfs = async function() {
+      try {
+        // 扫描项目根目录下的PDF文件
+        const response = await fetch('/api/files/list?path=.');
+        const data = await response.json();
+
+        this.pdfsEl.innerHTML = '';
+
+        // 筛选PDF文件
+        const pdfFiles = (data.entries || [])
+          .filter(e => e.type === 'file' && e.path.toLowerCase().endsWith('.pdf'));
+
+        if (pdfFiles.length === 0) {
+          this.showEmptyPdfState();
+          return;
+        }
+
+        pdfFiles.forEach(file => {
+          const pdfEl = this.createPdfElement(file);
+          this.pdfsEl.appendChild(pdfEl);
+        });
+      } catch (error) {
+        console.error('加载PDF文件失败:', error);
+        this.showEmptyPdfState('加载PDF文件失败');
+      }
+    };
+
+    VASPAgentApp.prototype.createPdfElement = function(file) {
+      const pdfEl = document.createElement('div');
+      pdfEl.className = 'file-item pdf-item';
+
+      const iconEl = document.createElement('div');
+      iconEl.className = 'file-icon';
+      iconEl.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+          <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+          <line x1="16" y1="13" x2="8" y2="21" stroke="currentColor" stroke-width="2"/>
+          <line x1="8" y1="13" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      `;
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'file-name';
+      nameEl.textContent = file.path.split('/').pop();
+
+      const actionsEl = document.createElement('div');
+      actionsEl.className = 'pdf-actions';
+
+      const analyzeBtn = document.createElement('button');
+      analyzeBtn.className = 'btn-secondary btn-sm';
+      analyzeBtn.innerHTML = '📖 分析';
+      analyzeBtn.onclick = (e) => {
+        e.stopPropagation();
+        this.analyzePdf(file.path);
+      };
+
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn-secondary btn-sm';
+      downloadBtn.innerHTML = '⬇️ 下载';
+      downloadBtn.onclick = (e) => {
+        e.stopPropagation();
+        this.downloadFile(file.path);
+      };
+
+      actionsEl.appendChild(analyzeBtn);
+      actionsEl.appendChild(downloadBtn);
+
+      pdfEl.appendChild(iconEl);
+      pdfEl.appendChild(nameEl);
+      pdfEl.appendChild(actionsEl);
+
+      return pdfEl;
+    };
+
+    VASPAgentApp.prototype.showEmptyPdfState = function(message = '暂无PDF文献') {
+      this.pdfsEl.innerHTML = `
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+            <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+            <line x1="16" y1="13" x2="8" y2="21" stroke="currentColor" stroke-width="2"/>
+            <line x1="8" y1="13" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <p>${message}</p>
+          <small>将PDF文件放入项目根目录中</small>
+        </div>
+      `;
+    };
+
+    VASPAgentApp.prototype.analyzePdf = function(pdfPath) {
+      // 在输入框中填入分析PDF的命令
+      this.inputEl.value = `请分析这个PDF文献：${pdfPath}`;
+      this.inputEl.focus();
+      // 自动调整输入框高度
+      this.adjustTextareaHeight();
+    };
+
+    VASPAgentApp.prototype.downloadFile = function(filePath) {
+      const url = `/api/files/download?path=${encodeURIComponent(filePath)}`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filePath.split('/').pop();
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+
+    // ===== 应用启动 =====
+    document.addEventListener('DOMContentLoaded', () => {
+      window.vaspApp = new VASPAgentApp();
+    });
   </script>
 </body>
 </html>
