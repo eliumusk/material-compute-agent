@@ -188,18 +188,18 @@ class SimPleChat:
         
 
         key_dict = dict(
-        DEEP_SEEK_BASE_URL = os.environ.get("DEEP_SEEK_BASE_URL"),
-        DEEP_SEEK_API_KEY = os.environ.get("DEEP_SEEK_API_KEY"),
-        DEEP_SEEK_MODEL_NAME = os.environ.get("DEEP_SEEK_MODEL_NAME"),
+        DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL"),
+        DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY"),
+        DEEPSEEK_MODEL_NAME = os.environ.get("DEEPSEEK_MODEL_NAME"),
         )
         
-        assert key_dict.get("DEEP_SEEK_API_KEY", None) is not None, "Please set the DEEP_SEEK_API_KEY in environment."
-        assert key_dict.get("DEEP_SEEK_BASE_URL", None) is not None, "Please set the DEEP_SEEK_BASE_URL in environment."
+        assert key_dict.get("DEEPSEEK_API_KEY", None) is not None, "Please set the DEEPSEEK_API_KEY in environment."
+        assert key_dict.get("DEEPSEEK_BASE_URL", None) is not None, "Please set the DEEPSEEK_BASE_URL in environment."
         self.client = openai.OpenAI(
-            api_key=key_dict.get("DEEP_SEEK_API_KEY"),
-            base_url=key_dict.get("DEEP_SEEK_BASE_URL"),
+            api_key=key_dict.get("DEEPSEEK_API_KEY"),
+            base_url=key_dict.get("DEEPSEEK_BASE_URL"),
         )
-        self.model = key_dict.get("DEEP_SEEK_MODEL_NAME","deepseek-chat")
+        self.model = key_dict.get("DEEPSEEK_MODEL_NAME","deepseek-chat")
 
     def refresh(self):
         self.messages = [{"role": "system", "content": self.system}]

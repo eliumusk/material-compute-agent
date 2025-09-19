@@ -12,3 +12,6 @@ camel/
 dpdispatcher.log
 science-agent-sdk
 .material-compute-googleadk.py
+/tmp
+# 忽略 server 文件夹下的时间戳命名文件
+/server/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9]*
