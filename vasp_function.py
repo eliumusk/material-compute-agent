@@ -5,6 +5,7 @@ import json
 import re
 import warnings
 import requests
+import urllib.parse
 from pymatgen.core import Lattice, Structure,Element
 from pymatgen.io.vasp.inputs import Poscar
 import openai
@@ -400,3 +401,68 @@ def rewrite_vasp_config(calcdir: str, config: str, new_content: str) -> dict:
         }
     except Exception as e:
         return {"error": f"Failed to rewrite {config}: {str(e)}"}
+
+
+def web_search(query: str, max_length: int = 2000) -> str:
+    """
+    使用Jina AI搜索网络内容
+
+    Args:
+        query (str): 搜索查询词
+        max_length (int): 最大返回内容长度，控制token消耗，默认2000字符
+
+    Returns:
+        str: 搜索结果的文本摘要，如果出错则返回错误信息
+
+    Example:
+        result = web_search("VASP 6.4.0 new features")
+        result = web_search("材料科学最新研究进展")
+    """
+    try:
+        # 从环境变量获取API key
+        api_key = os.getenv('JINA_API_KEY')
+        if not api_key:
+            return "错误：未找到JINA_API_KEY环境变量，请在.env文件中配置"
+
+        # URL编码查询参数，处理中文和特殊字符
+        encoded_query = urllib.parse.quote(query)
+        url = f"https://s.jina.ai/?q={encoded_query}"
+
+        # 设置请求头
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "X-Respond-With": "no-content"  # 返回纯文本而不是HTML
+        }
+
+        # 发送请求，设置超时
+        response = requests.get(url, headers=headers, timeout=30)
+        response.raise_for_status()  # 如果HTTP状态码表示错误，抛出异常
+
+        # 获取搜索结果
+        search_results = response.text.strip()
+
+        if not search_results:
+            return f"搜索查询 '{query}' 未找到相关结果"
+
+        # 限制返回内容长度，避免token过多
+        if len(search_results) > max_length:
+            search_results = search_results[:max_length] + "...\n[结果已截断，如需更多信息请细化搜索查询]"
+
+        # 格式化返回结果
+        formatted_result = f"🔍 网络搜索结果 - 查询: '{query}'\n\n{search_results}"
+
+        return formatted_result
+
+    except requests.exceptions.Timeout:
+        return f"搜索超时：网络请求超过30秒，请稍后重试"
+    except requests.exceptions.ConnectionError:
+        return f"网络连接错误：无法连接到Jina AI搜索服务"
+    except requests.exceptions.HTTPError as e:
+        if response.status_code == 401:
+            return "认证错误：Jina AI API key无效或已过期"
+        elif response.status_code == 429:
+            return "请求频率限制：请稍后再试"
+        else:
+            return f"HTTP错误 {response.status_code}: {str(e)}"
+    except Exception as e:
+        return f"搜索出错: {str(e)}"

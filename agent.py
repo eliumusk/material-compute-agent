@@ -12,7 +12,7 @@ from google.adk.sessions import InMemorySessionService
 from dp.agent.adapter.adk import CalculationMCPToolset
 from google.adk.tools import FunctionTool
 from vasp_function import read_vasp_pdf,write_vasp_report,analyze_vasprun_all,search_poscar_template,write_poscar,write_vasp_config
-from vasp_function import show_vasp_config,rewrite_vasp_config
+from vasp_function import show_vasp_config,rewrite_vasp_config,web_search
 from utils import ask_human_for_advice,show_task_status
 from dotenv import load_dotenv
 load_dotenv()
@@ -147,6 +147,7 @@ show_vasp_config = FunctionTool(func=show_vasp_config)
 rewrite_vasp_config = FunctionTool(func=rewrite_vasp_config)
 ask_human_for_advice = FunctionTool(func=ask_human_for_advice)
 show_task_status = FunctionTool(func=show_task_status)
+web_search = FunctionTool(func=web_search)
 
 
 async def async_main():
@@ -164,8 +165,23 @@ async def async_main():
         description=(
             "A phd who is good at using VASP to calculate the properties of materials."
         ),
-        instruction="帮助人类工作",
-        tools=[show_task_status,ask_human_for_advice,read_vasp_pdf,write_poscar,write_vasp_config,show_vasp_config,rewrite_vasp_config,analyze_vasprun_all,write_vasp_report,search_poscar_template,*vasp_tools],
+        instruction="""
+你是资深VASP计算助手和材料科学专家。
+🔍 **搜索策略**：
+- 当遇到超出训练数据范围的问题时，主动使用web_search工具搜索最新信息
+- 当用户询问最新研究进展、软件版本、技术更新时，优先搜索
+- 用户明确要求搜索时，立即执行搜索
+- 搜索后要明确引用和整合搜索结果，不要忽略搜索内容
+
+📚 **知识整合**：
+- 结合搜索结果和已有知识提供全面回答
+- 明确标注信息来源（搜索结果 vs 已有知识）
+- 对搜索结果进行分析和总结，不要简单复制
+
+🎯 **核心任务**：
+根据用户提供的材料体系或文献，自动生成结构、配置并提交VASP任务，最终分析结果并生成标准报告。
+""",
+        tools=[show_task_status,ask_human_for_advice,read_vasp_pdf,write_poscar,write_vasp_config,show_vasp_config,rewrite_vasp_config,analyze_vasprun_all,write_vasp_report,search_poscar_template,web_search,*vasp_tools],
     )
 
     session_service = InMemorySessionService()
