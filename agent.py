@@ -34,9 +34,10 @@ bohr_executor = {
         "batch_type": "Bohrium",
         "context_type": "Bohrium",
         "remote_profile": {
-            "email": os.environ.get("BOHRIUM_USERNAME"),
-            "password": os.environ.get("BOHRIUM_PASSWORD"),
-            "project_id": int(os.environ.get("BOHRIUM_PROJECT_ID")),
+            "email": "linhang@dp.tech",
+            "password": "DP123456",
+            "project_id": 21128,
+            "program_id": 21128,
             "input_data": {
                 "image_name": "registry.dp.tech/dptech/vasp:5.4.4",
                 "job_type": "container",
@@ -50,9 +51,9 @@ bohr_executor = {
 }
 bohr_storage = {
     "type": "bohrium",
-    "username": os.environ.get("BOHRIUM_USERNAME"),
-    "password": os.environ.get("BOHRIUM_PASSWORD"),
-    "project_id": int(os.environ.get("BOHRIUM_PROJECT_ID")),
+    "username": "linhang@dp.tech",
+    "password": "DP123456",
+    "project_id": 21128,
 }
 
 
