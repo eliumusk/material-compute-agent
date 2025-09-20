@@ -265,6 +265,28 @@
     .chat-actions {
       display: flex;
       gap: var(--spacing-sm);
+      align-items: center;
+    }
+
+    .language-select {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .language-select:hover {
+      border-color: var(--accent-primary);
+    }
+
+    .language-select:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px var(--accent-primary-alpha);
     }
 
     .chat-messages {
@@ -988,7 +1010,7 @@
         </div>
         <div class="brand-text">
           <h1 class="brand-title">VASP Agent</h1>
-          <p class="brand-subtitle">智能材料计算平台</p>
+          <p class="brand-subtitle" data-i18n="platform-title">智能材料计算平台</p>
         </div>
       </div>
 
@@ -1013,23 +1035,23 @@
     <div class="progress-steps">
       <div class="step active" data-step="1">
         <div class="step-indicator">1</div>
-        <div class="step-label">任务信息</div>
+        <div class="step-label" data-i18n="task-info">任务信息</div>
       </div>
       <div class="step" data-step="2">
         <div class="step-indicator">2</div>
-        <div class="step-label">结构确认</div>
+        <div class="step-label" data-i18n="structure-confirm">结构确认</div>
       </div>
       <div class="step" data-step="3">
         <div class="step-indicator">3</div>
-        <div class="step-label">配置检查</div>
+        <div class="step-label" data-i18n="config-check">配置检查</div>
       </div>
       <div class="step" data-step="4">
         <div class="step-indicator">4</div>
-        <div class="step-label">任务提交</div>
+        <div class="step-label" data-i18n="task-submit">任务提交</div>
       </div>
       <div class="step" data-step="5">
         <div class="step-indicator">5</div>
-        <div class="step-label">结果分析</div>
+        <div class="step-label" data-i18n="result-analysis">结果分析</div>
       </div>
     </div>
   </div>
@@ -1039,10 +1061,14 @@
     <!-- 对话区域 -->
     <section class="chat-section">
       <div class="chat-header">
-        <h2 class="chat-title">对话</h2>
+        <h2 class="chat-title" data-i18n="chat">对话</h2>
         <div class="chat-actions">
-          <button class="btn-secondary btn-sm" id="new-session">新会话</button>
-          <button class="btn-secondary btn-sm" id="retry">重试</button>
+          <select id="languageSelect" class="language-select">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+          <button class="btn-secondary btn-sm" id="new-session" data-i18n="new-session">新会话</button>
+          <button class="btn-secondary btn-sm" id="retry" data-i18n="retry">重试</button>
         </div>
       </div>
 
@@ -1078,10 +1104,10 @@
     <!-- 侧边栏 -->
     <aside class="sidebar">
       <div class="sidebar-tabs">
-        <button class="tab-btn active" data-tab="files">文件</button>
-        <button class="tab-btn" data-tab="results">结果</button>
-        <button class="tab-btn" data-tab="pdfs">文献</button>
-        <button class="tab-btn" data-tab="logs">日志</button>
+        <button class="tab-btn active" data-tab="files" data-i18n="files">文件</button>
+        <button class="tab-btn" data-tab="results" data-i18n="results">结果</button>
+        <button class="tab-btn" data-tab="pdfs" data-i18n="literature">文献</button>
+        <button class="tab-btn" data-tab="logs" data-i18n="logs">日志</button>
       </div>
 
       <!-- 文件标签页 -->
@@ -1093,10 +1119,10 @@
                 <path d="M23 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              刷新
+              <span data-i18n="refresh">刷新</span>
             </button>
             <select id="calcdirs" class="select-input">
-              <option value="">选择计算目录</option>
+              <option value="" data-i18n="select-calc-dir">选择计算目录</option>
             </select>
           </div>
         </div>
@@ -1107,8 +1133,8 @@
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <p>暂无文件</p>
-            <small>选择计算目录查看文件</small>
+            <p data-i18n="no-files">暂无文件</p>
+            <small data-i18n="select-dir-to-view">选择计算目录查看文件</small>
           </div>
         </div>
       </div>
@@ -1125,7 +1151,7 @@
               刷新
             </button>
             <select id="result-dirs" class="select-input">
-              <option value="">选择结果目录</option>
+              <option value="" data-i18n="select-result-dir">选择结果目录</option>
             </select>
           </div>
         </div>
@@ -1135,8 +1161,8 @@
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 11H7l5-8 5 8h-2l-3 7-3-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <p>暂无计算结果</p>
-            <small>提交VASP任务后结果将在这里显示</small>
+            <p data-i18n="no-results">暂无计算结果</p>
+            <small data-i18n="results-will-show">提交VASP任务后结果将在这里显示</small>
           </div>
         </div>
       </div>
@@ -1163,8 +1189,8 @@
               <line x1="16" y1="13" x2="8" y2="21" stroke="currentColor" stroke-width="2"/>
               <line x1="8" y1="13" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
             </svg>
-            <p>暂无PDF文献</p>
-            <small>将PDF文件放入项目目录中</small>
+            <p data-i18n="no-pdfs">暂无PDF文献</p>
+            <small data-i18n="put-pdfs-in-dir">将PDF文件放入项目目录中</small>
           </div>
         </div>
       </div>
@@ -1178,7 +1204,7 @@
                 <polyline points="3,6 5,6 21,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              清空
+              <span data-i18n="clear-logs">清空日志</span>
             </button>
             <div class="log-status">
               <span class="status-indicator" id="mcp-status"></span>
@@ -1214,8 +1240,8 @@
         <pre id="preview" class="code-preview"></pre>
       </div>
       <div class="modal-footer">
-        <button class="btn-secondary" id="download-file">下载文件</button>
-        <button class="btn-primary" id="close-preview-btn">关闭</button>
+        <button class="btn-secondary" id="download-file" data-i18n="download-file">下载文件</button>
+        <button class="btn-primary" id="close-preview-btn" data-i18n="close">关闭</button>
       </div>
     </div>
   </div>
@@ -1229,6 +1255,187 @@
   </div>
 
   <script>
+    // 国际化翻译字典
+    const translations = {
+      zh: {
+        'chat': '对话',
+        'new-session': '新会话',
+        'retry': '重试',
+        'files': '文件',
+        'results': '结果',
+        'literature': '文献',
+        'logs': '日志',
+        'refresh': '刷新',
+        'select-directory': '选择目录',
+        'select-file': '选择文件',
+        'preview': '预览',
+        'download': '下载',
+        'analyze': '分析',
+        'clear-logs': '清空日志',
+        'file-preview': '文件预览',
+        'close': '关闭',
+        'loading': '加载中...',
+        'initializing': '正在初始化...',
+        'init-failed': '初始化失败',
+        'welcome-message': '你好，我是 VASP Agent 智能材料计算助手。\n\n我可以帮助您：\n• 分析PDF文献中的材料信息\n• 生成和优化POSCAR结构文件\n• 配置VASP计算参数\n• 提交和监控计算任务\n• 分析计算结果并生成报告\n\n请告诉我您的材料体系或上传相关文献开始计算流程。',
+        'send-message': '发送消息...',
+        'type-message': '输入消息...',
+        'platform-title': '智能材料计算平台',
+        'select-calc-dir': '选择计算目录',
+        'select-result-dir': '选择结果目录',
+        'no-files': '暂无文件',
+        'select-dir-to-view': '选择计算目录查看文件',
+        'no-results': '暂无计算结果',
+        'results-will-show': '提交VASP任务后结果将在这里显示',
+        'no-pdfs': '暂无PDF文献',
+        'put-pdfs-in-dir': '将PDF文件放入项目目录中',
+        'input-files': '输入文件',
+        'output-files': '输出文件',
+        'other-files': '其他文件',
+        'auto-select-latest': '自动选择最新的目录',
+        'load-files-failed': '加载文件失败',
+        'load-results-failed': '加载结果文件失败',
+        'input-placeholder': '描述你的材料计算需求，或上传PDF文献...',
+        'theme-toggle': '切换主题',
+        'upload-file': '上传文件',
+        'task-info': '任务信息',
+        'structure-confirm': '结构确认',
+        'config-check': '配置检查',
+        'task-submit': '任务提交',
+        'result-analysis': '结果分析',
+        'download-file': '下载文件',
+        'analyze-pdf': '请分析这个PDF文献：',
+        'clear-logs-btn': '清空日志'
+      },
+      en: {
+        'chat': 'Chat',
+        'new-session': 'New Session',
+        'retry': 'Retry',
+        'files': 'Files',
+        'results': 'Results',
+        'literature': 'Literature',
+        'logs': 'Logs',
+        'refresh': 'Refresh',
+        'select-directory': 'Select Directory',
+        'select-file': 'Select File',
+        'preview': 'Preview',
+        'download': 'Download',
+        'analyze': 'Analyze',
+        'clear-logs': 'Clear Logs',
+        'file-preview': 'File Preview',
+        'close': 'Close',
+        'loading': 'Loading...',
+        'initializing': 'Initializing...',
+        'init-failed': 'Initialization failed',
+        'welcome-message': 'Hello, I am VASP Agent, an intelligent materials computation assistant.\n\nI can help you with:\n• Analyzing material information from PDF literature\n• Generating and optimizing POSCAR structure files\n• Configuring VASP calculation parameters\n• Submitting and monitoring calculation tasks\n• Analyzing calculation results and generating reports\n\nPlease tell me your material system or upload relevant literature to start the calculation workflow.',
+        'send-message': 'Send message...',
+        'type-message': 'Type a message...',
+        'platform-title': 'Intelligent Materials Computing Platform',
+        'select-calc-dir': 'Select Calculation Directory',
+        'select-result-dir': 'Select Result Directory',
+        'no-files': 'No Files',
+        'select-dir-to-view': 'Select calculation directory to view files',
+        'no-results': 'No Calculation Results',
+        'results-will-show': 'Results will be displayed here after submitting VASP tasks',
+        'no-pdfs': 'No PDF Literature',
+        'put-pdfs-in-dir': 'Place PDF files in the project directory',
+        'input-files': 'Input Files',
+        'output-files': 'Output Files',
+        'other-files': 'Other Files',
+        'auto-select-latest': 'Auto-select latest directory',
+        'load-files-failed': 'Failed to load files',
+        'load-results-failed': 'Failed to load result files',
+        'input-placeholder': 'Describe your materials calculation requirements, or upload PDF literature...',
+        'theme-toggle': 'Toggle Theme',
+        'upload-file': 'Upload File',
+        'task-info': 'Task Info',
+        'structure-confirm': 'Structure Confirm',
+        'config-check': 'Config Check',
+        'task-submit': 'Task Submit',
+        'result-analysis': 'Result Analysis',
+        'download-file': 'Download File',
+        'analyze-pdf': 'Please analyze this PDF literature: ',
+        'clear-logs-btn': 'Clear Logs'
+      }
+    };
+
+    // 国际化管理器
+    class I18nManager {
+      constructor() {
+        this.currentLang = localStorage.getItem('language') || 'zh';
+        this.init();
+      }
+
+      init() {
+        this.updateLanguage(this.currentLang);
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        const languageSelect = document.getElementById('languageSelect');
+        if (languageSelect) {
+          languageSelect.value = this.currentLang;
+          languageSelect.addEventListener('change', (e) => {
+            this.updateLanguage(e.target.value);
+          });
+        }
+      }
+
+      updateLanguage(lang) {
+        this.currentLang = lang;
+        localStorage.setItem('language', lang);
+
+        // 更新所有带有 data-i18n 属性的元素
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+          const key = element.getAttribute('data-i18n');
+          if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+          }
+        });
+
+        // 更新占位符文本
+        const messageInput = document.getElementById('input');
+        if (messageInput) {
+          messageInput.placeholder = this.t('input-placeholder');
+        }
+
+        // 更新页面标题
+        document.title = `VASP Agent - ${this.t('platform-title')}`;
+
+        // 更新语言选择器
+        const languageSelect = document.getElementById('languageSelect');
+        if (languageSelect) {
+          languageSelect.value = lang;
+        }
+
+        // 更新选择框的默认选项
+        this.updateSelectOptions();
+      }
+
+      t(key) {
+        return translations[this.currentLang] && translations[this.currentLang][key]
+          ? translations[this.currentLang][key]
+          : key;
+      }
+
+      updateSelectOptions() {
+        // 更新计算目录选择框
+        const calcdirsSelect = document.getElementById('calcdirs');
+        if (calcdirsSelect && calcdirsSelect.options[0]) {
+          calcdirsSelect.options[0].textContent = this.t('select-calc-dir');
+        }
+
+        // 更新结果目录选择框
+        const resultDirsSelect = document.getElementById('result-dirs');
+        if (resultDirsSelect && resultDirsSelect.options[0]) {
+          resultDirsSelect.options[0].textContent = this.t('select-result-dir');
+        }
+      }
+    }
+
+    // 全局国际化实例
+    const i18n = new I18nManager();
+
     // ===== 应用状态管理 =====
     class VASPAgentApp {
       constructor() {
@@ -1331,10 +1538,10 @@
 
       async initialize() {
         try {
-          this.showLoading('正在初始化...');
+          this.showLoading(i18n.t('initializing'));
           await this.createSession();
           await this.loadCalcdirs();
-          this.addMessage('model', '你好，我是 VASP Agent 智能材料计算助手。\n\n我可以帮助您：\n• 分析PDF文献中的材料信息\n• 生成和优化POSCAR结构文件\n• 配置VASP计算参数\n• 提交和监控计算任务\n• 分析计算结果并生成报告\n\n请告诉我您的材料体系或上传相关文献开始计算流程。');
+          this.addMessage('model', i18n.t('welcome-message'));
           this.hideLoading();
         } catch (error) {
           this.hideLoading();
@@ -1545,7 +1752,7 @@
         const response = await fetch('/api/files/calcdirs');
         const data = await response.json();
 
-        this.calcdirsEl.innerHTML = '<option value="">选择计算目录</option>';
+        this.calcdirsEl.innerHTML = `<option value="">${i18n.t('select-calc-dir')}</option>`;
         (data.calcdirs || []).forEach(name => {
           const option = document.createElement('option');
           option.value = name;
@@ -1622,15 +1829,16 @@
       return icons[ext] || icons.default;
     };
 
-    VASPAgentApp.prototype.showEmptyFileState = function(message = '暂无文件') {
+    VASPAgentApp.prototype.showEmptyFileState = function(message = null) {
+      const displayMessage = message || i18n.t('no-files');
       this.filesEl.innerHTML = `
         <div class="empty-state">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
             <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
           </svg>
-          <p>${message}</p>
-          <small>选择计算目录查看文件</small>
+          <p>${displayMessage}</p>
+          <small>${i18n.t('select-dir-to-view')}</small>
         </div>
       `;
     };
@@ -1698,7 +1906,7 @@
         const response = await fetch('/api/files/list?path=server');
         const data = await response.json();
 
-        this.resultDirsEl.innerHTML = '<option value="">选择结果目录</option>';
+        this.resultDirsEl.innerHTML = `<option value="">${i18n.t('select-result-dir')}</option>`;
 
         // 获取server目录下的所有时间戳目录，按时间倒序排列
         const dirs = (data.entries || [])
@@ -1795,9 +2003,9 @@
                 const subGroupTitleEl = document.createElement('div');
                 subGroupTitleEl.className = 'result-subgroup-title';
                 subGroupTitleEl.textContent = {
-                  'input': '📝 输入文件',
-                  'output': '📊 输出文件',
-                  'other': '📄 其他文件'
+                  'input': `📝 ${i18n.t('input-files')}`,
+                  'output': `📊 ${i18n.t('output-files')}`,
+                  'other': `📄 ${i18n.t('other-files')}`
                 }[groupName];
 
                 subGroupEl.appendChild(subGroupTitleEl);
@@ -1816,17 +2024,18 @@
         }
       } catch (error) {
         console.error('加载结果文件失败:', error);
-        this.showEmptyResultState('加载结果文件失败');
+        this.showEmptyResultState(i18n.t('load-results-failed'));
       }
     };
 
-    VASPAgentApp.prototype.showEmptyResultState = function(message = '暂无计算结果') {
+    VASPAgentApp.prototype.showEmptyResultState = function(message = null) {
+      const displayMessage = message || i18n.t('no-results');
       this.resultsEl.innerHTML = `
         <div class="empty-state">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9 11H7l5-8 5 8h-2l-3 7-3-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <p>${message}</p>
+          <p>${displayMessage}</p>
           <small>提交VASP任务后结果将在这里显示</small>
         </div>
       `;
@@ -1895,7 +2104,7 @@
 
       const analyzeBtn = document.createElement('button');
       analyzeBtn.className = 'btn-secondary btn-sm';
-      analyzeBtn.innerHTML = '📖 分析';
+      analyzeBtn.innerHTML = `📖 ${i18n.t('analyze')}`;
       analyzeBtn.onclick = (e) => {
         e.stopPropagation();
         this.analyzePdf(file.path);
@@ -1903,7 +2112,7 @@
 
       const downloadBtn = document.createElement('button');
       downloadBtn.className = 'btn-secondary btn-sm';
-      downloadBtn.innerHTML = '⬇️ 下载';
+      downloadBtn.innerHTML = `⬇️ ${i18n.t('download')}`;
       downloadBtn.onclick = (e) => {
         e.stopPropagation();
         this.downloadFile(file.path);
@@ -1919,7 +2128,8 @@
       return pdfEl;
     };
 
-    VASPAgentApp.prototype.showEmptyPdfState = function(message = '暂无PDF文献') {
+    VASPAgentApp.prototype.showEmptyPdfState = function(message = null) {
+      const displayMessage = message || i18n.t('no-pdfs');
       this.pdfsEl.innerHTML = `
         <div class="empty-state">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1928,15 +2138,15 @@
             <line x1="16" y1="13" x2="8" y2="21" stroke="currentColor" stroke-width="2"/>
             <line x1="8" y1="13" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
           </svg>
-          <p>${message}</p>
-          <small>将PDF文件放入项目根目录中</small>
+          <p>${displayMessage}</p>
+          <small>${i18n.t('put-pdfs-in-dir')}</small>
         </div>
       `;
     };
 
     VASPAgentApp.prototype.analyzePdf = function(pdfPath) {
       // 在输入框中填入分析PDF的命令
-      this.inputEl.value = `请分析这个PDF文献：${pdfPath}`;
+      this.inputEl.value = `${i18n.t('analyze-pdf')}${pdfPath}`;
       this.inputEl.focus();
       // 自动调整输入框高度
       this.adjustTextareaHeight();
