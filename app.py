@@ -7,6 +7,7 @@ import requests
 from typing import List, Dict, Any
 
 from flask import Flask, request, jsonify, send_file
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
 # ADK / Agent imports
@@ -42,6 +43,7 @@ app = Flask(__name__)
 
 # 配置 Flask，避免计算文件变化导致应用重启
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB 文件大小限制
 
 # -----------------------------
 # Project root and safe paths
@@ -391,8 +393,62 @@ def api_files_download():
 
     return send_file(p, as_attachment=True)
 
-@app.get("/")
 
+@app.post("/api/files/upload")
+def api_files_upload():
+    """上传PDF文件到项目根目录"""
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No file selected"}), 400
+
+    # 验证文件类型
+    if not file.filename.lower().endswith('.pdf'):
+        return jsonify({"error": "Only PDF files are allowed"}), 400
+
+    # 验证MIME类型
+    if file.content_type != 'application/pdf':
+        return jsonify({"error": "Invalid file type. Only PDF files are allowed"}), 400
+
+    try:
+        # 安全的文件名处理
+        filename = secure_filename(file.filename)
+        if not filename:
+            return jsonify({"error": "Invalid filename"}), 400
+
+        # 确保文件名以.pdf结尾
+        if not filename.lower().endswith('.pdf'):
+            filename += '.pdf'
+
+        # 保存到项目根目录
+        file_path = os.path.join(PROJECT_ROOT, filename)
+
+        # 检查文件是否已存在，如果存在则添加数字后缀
+        counter = 1
+        original_filename = filename
+        while os.path.exists(file_path):
+            name, ext = os.path.splitext(original_filename)
+            filename = f"{name}_{counter}{ext}"
+            file_path = os.path.join(PROJECT_ROOT, filename)
+            counter += 1
+
+        # 保存文件
+        file.save(file_path)
+
+        return jsonify({
+            "success": True,
+            "message": "File uploaded successfully",
+            "filename": filename,
+            "path": filename
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"Upload failed: {str(e)}"}), 500
+
+
+@app.get("/")
 def index():
     # Serve the minimal single-page UI from static/index.html (now in project root)
     return send_file(os.path.join(PROJECT_ROOT, "static", "index.html"))

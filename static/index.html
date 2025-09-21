@@ -656,6 +656,77 @@
       font-size: var(--font-size-xs);
     }
 
+    /* ===== 文件上传样式 ===== */
+    .upload-drop-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-xl);
+      margin: var(--spacing-md);
+      text-align: center;
+      background: var(--bg-secondary);
+      transition: all var(--transition-normal);
+      cursor: pointer;
+    }
+
+    .upload-drop-zone:hover,
+    .upload-drop-zone.drag-over {
+      border-color: var(--accent-primary);
+      background: var(--accent-primary-light);
+    }
+
+    .upload-drop-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-sm);
+      color: var(--text-muted);
+    }
+
+    .upload-drop-content svg {
+      opacity: 0.6;
+    }
+
+    .upload-drop-content p {
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .upload-drop-content small {
+      opacity: 0.7;
+    }
+
+    /* 上传进度样式 */
+    .upload-progress {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-lg);
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      min-width: 300px;
+      text-align: center;
+    }
+
+    .upload-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: var(--spacing-md) 0;
+    }
+
+    .upload-progress-fill {
+      height: 100%;
+      background: var(--accent-primary);
+      transition: width var(--transition-normal);
+      width: 0%;
+    }
+
     /* ===== 结果分组样式 ===== */
     .result-group {
       margin-bottom: var(--spacing-lg);
@@ -1171,13 +1242,37 @@
       <div class="tab-content" id="pdfs-tab">
         <div class="pdfs-header">
           <div class="pdfs-toolbar">
+            <button class="btn-primary btn-sm" id="upload-pdf">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span data-i18n="upload-pdf">上传PDF</span>
+            </button>
             <button class="btn-secondary btn-sm" id="refresh-pdfs">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M23 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              刷新
+              <span data-i18n="refresh">刷新</span>
             </button>
+          </div>
+        </div>
+
+        <!-- 隐藏的文件输入 -->
+        <input type="file" id="pdf-file-input" accept=".pdf" style="display: none;" multiple>
+
+        <!-- 拖拽上传区域 -->
+        <div class="upload-drop-zone" id="pdf-drop-zone" style="display: none;">
+          <div class="upload-drop-content">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p data-i18n="drop-files-here">拖拽PDF文件到这里上传</p>
+            <small data-i18n="or-click-to-select">或点击选择文件</small>
           </div>
         </div>
 
@@ -1190,7 +1285,7 @@
               <line x1="8" y1="13" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
             </svg>
             <p data-i18n="no-pdfs">暂无PDF文献</p>
-            <small data-i18n="put-pdfs-in-dir">将PDF文件放入项目目录中</small>
+            <small data-i18n="upload-or-drag-pdfs">点击上传按钮或拖拽PDF文件到这里</small>
           </div>
         </div>
       </div>
@@ -1305,7 +1400,16 @@
         'result-analysis': '结果分析',
         'download-file': '下载文件',
         'analyze-pdf': '请分析这个PDF文献：',
-        'clear-logs-btn': '清空日志'
+        'clear-logs-btn': '清空日志',
+        'upload-pdf': '上传PDF',
+        'drop-files-here': '拖拽PDF文件到这里上传',
+        'or-click-to-select': '或点击选择文件',
+        'upload-or-drag-pdfs': '点击上传按钮或拖拽PDF文件到这里',
+        'uploading': '上传中...',
+        'upload-success': '上传成功',
+        'upload-failed': '上传失败',
+        'invalid-file-type': '只支持PDF文件',
+        'file-too-large': '文件过大'
       },
       en: {
         'chat': 'Chat',
@@ -1355,7 +1459,16 @@
         'result-analysis': 'Result Analysis',
         'download-file': 'Download File',
         'analyze-pdf': 'Please analyze this PDF literature: ',
-        'clear-logs-btn': 'Clear Logs'
+        'clear-logs-btn': 'Clear Logs',
+        'upload-pdf': 'Upload PDF',
+        'drop-files-here': 'Drag PDF files here to upload',
+        'or-click-to-select': 'or click to select files',
+        'upload-or-drag-pdfs': 'Click upload button or drag PDF files here',
+        'uploading': 'Uploading...',
+        'upload-success': 'Upload successful',
+        'upload-failed': 'Upload failed',
+        'invalid-file-type': 'Only PDF files are supported',
+        'file-too-large': 'File too large'
       }
     };
 
@@ -1513,9 +1626,25 @@
 
         // PDF操作
         this.refreshPdfsBtn = document.getElementById('refresh-pdfs');
+        this.uploadPdfBtn = document.getElementById('upload-pdf');
+        this.pdfFileInput = document.getElementById('pdf-file-input');
+        this.pdfDropZone = document.getElementById('pdf-drop-zone');
         this.pdfsEl = document.getElementById('pdfs');
 
         this.refreshPdfsBtn.addEventListener('click', () => this.loadPdfs());
+        this.uploadPdfBtn.addEventListener('click', () => this.triggerFileUpload());
+        this.pdfFileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+
+        // 拖拽上传事件
+        this.pdfDropZone.addEventListener('click', () => this.triggerFileUpload());
+        this.pdfDropZone.addEventListener('dragover', (e) => this.handleDragOver(e));
+        this.pdfDropZone.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+        this.pdfDropZone.addEventListener('drop', (e) => this.handleDrop(e));
+
+        // 为整个PDF标签页添加拖拽支持
+        this.pdfsEl.addEventListener('dragover', (e) => this.handleDragOver(e));
+        this.pdfsEl.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+        this.pdfsEl.addEventListener('drop', (e) => this.handleDrop(e));
 
         // 模态框控制
         this.closePreviewBtn.addEventListener('click', () => this.closePreview());
@@ -2160,6 +2289,159 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+    };
+
+    // ===== 文件上传功能 =====
+    VASPAgentApp.prototype.triggerFileUpload = function() {
+      this.pdfFileInput.click();
+    };
+
+    VASPAgentApp.prototype.handleFileSelect = function(event) {
+      const files = event.target.files;
+      if (files.length > 0) {
+        this.uploadFiles(Array.from(files));
+      }
+    };
+
+    VASPAgentApp.prototype.handleDragOver = function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.pdfDropZone.style.display = 'block';
+      this.pdfDropZone.classList.add('drag-over');
+    };
+
+    VASPAgentApp.prototype.handleDragLeave = function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      // 只有当离开整个拖拽区域时才隐藏
+      if (!event.currentTarget.contains(event.relatedTarget)) {
+        this.pdfDropZone.classList.remove('drag-over');
+        setTimeout(() => {
+          if (!this.pdfDropZone.classList.contains('drag-over')) {
+            this.pdfDropZone.style.display = 'none';
+          }
+        }, 100);
+      }
+    };
+
+    VASPAgentApp.prototype.handleDrop = function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.pdfDropZone.classList.remove('drag-over');
+      this.pdfDropZone.style.display = 'none';
+
+      const files = Array.from(event.dataTransfer.files);
+      const pdfFiles = files.filter(file => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+
+      if (pdfFiles.length === 0) {
+        this.showMessage(i18n.t('invalid-file-type'), 'error');
+        return;
+      }
+
+      this.uploadFiles(pdfFiles);
+    };
+
+    VASPAgentApp.prototype.uploadFiles = async function(files) {
+      if (files.length === 0) return;
+
+      // 显示上传进度
+      this.showUploadProgress();
+
+      let successCount = 0;
+      let failCount = 0;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // 验证文件类型
+        if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')) {
+          this.showMessage(`${file.name}: ${i18n.t('invalid-file-type')}`, 'error');
+          failCount++;
+          continue;
+        }
+
+        // 验证文件大小 (50MB)
+        if (file.size > 50 * 1024 * 1024) {
+          this.showMessage(`${file.name}: ${i18n.t('file-too-large')}`, 'error');
+          failCount++;
+          continue;
+        }
+
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+
+          const response = await fetch('/api/files/upload', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (response.ok && result.success) {
+            successCount++;
+          } else {
+            this.showMessage(`${file.name}: ${result.error || i18n.t('upload-failed')}`, 'error');
+            failCount++;
+          }
+        } catch (error) {
+          console.error('Upload error:', error);
+          this.showMessage(`${file.name}: ${i18n.t('upload-failed')}`, 'error');
+          failCount++;
+        }
+
+        // 更新进度
+        this.updateUploadProgress((i + 1) / files.length * 100);
+      }
+
+      // 隐藏进度条
+      this.hideUploadProgress();
+
+      // 显示结果消息
+      if (successCount > 0) {
+        this.showMessage(`${i18n.t('upload-success')}: ${successCount} 个文件`, 'success');
+        // 刷新PDF列表
+        this.loadPdfs();
+      }
+
+      if (failCount > 0) {
+        this.showMessage(`${failCount} 个文件上传失败`, 'error');
+      }
+
+      // 清空文件输入
+      this.pdfFileInput.value = '';
+    };
+
+    VASPAgentApp.prototype.showUploadProgress = function() {
+      if (document.getElementById('upload-progress')) return;
+
+      const progressEl = document.createElement('div');
+      progressEl.id = 'upload-progress';
+      progressEl.className = 'upload-progress';
+      progressEl.innerHTML = `
+        <p>${i18n.t('uploading')}</p>
+        <div class="upload-progress-bar">
+          <div class="upload-progress-fill" id="upload-progress-fill"></div>
+        </div>
+        <small>0%</small>
+      `;
+      document.body.appendChild(progressEl);
+    };
+
+    VASPAgentApp.prototype.updateUploadProgress = function(percent) {
+      const fillEl = document.getElementById('upload-progress-fill');
+      const progressEl = document.getElementById('upload-progress');
+      if (fillEl && progressEl) {
+        fillEl.style.width = percent + '%';
+        progressEl.querySelector('small').textContent = Math.round(percent) + '%';
+      }
+    };
+
+    VASPAgentApp.prototype.hideUploadProgress = function() {
+      const progressEl = document.getElementById('upload-progress');
+      if (progressEl) {
+        progressEl.remove();
+      }
     };
 
     // ===== 应用启动 =====
